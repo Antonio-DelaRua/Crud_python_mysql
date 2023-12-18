@@ -57,7 +57,7 @@ def Formulario():
         
         try:
             base = Tk()
-            base.geometry("1600x300")
+            base.geometry("1600x600")
             base.title("ARL PONTOCO")
             
             groupBox = LabelFrame(base, text="Datos Del Personal", padx=5,pady=5)
@@ -87,7 +87,7 @@ def Formulario():
             
             Button(groupBox,text="Guardar", width=10,command=guardarRegistros).grid(row=5,column=0)
             Button(groupBox,text="Modificar", width=10,command=modificarRegistros).grid(row=5,column=1)
-            Button(groupBox,text="Eliminar", width=10).grid(row=5,column=2)
+            Button(groupBox,text="Eliminar", width=10,command=eliminarRegistros).grid(row=5,column=2)
             
             groupBox = LabelFrame(base,text="Lista de trabajadores", padx=5,pady=5,)
             groupBox.grid(row=0,column=1,padx=5,pady=5)
@@ -96,7 +96,7 @@ def Formulario():
             
             #Configurar las columnas
             
-            tree = ttk.Treeview(groupBox,columns=("DNI","Nombres","apellidos","telefonos","Cargo"), show='headings',height=5,)
+            tree = ttk.Treeview(groupBox,columns=("DNI","Nombres","apellidos","telefonos","Cargo"), show='headings',height=15,)
             tree.column("# 1", anchor=CENTER)
             tree.heading("# 1",text="DNI")
             
@@ -225,6 +225,31 @@ def modificarRegistros():
             
             CClientes.modificarClientes(dni,nombres,apellidos,telefono,cargo)
             messagebox.showinfo("Información","Los datos fueron guardados")
+            
+            actualizarTreeView()
+            
+            TextBoxDni.delete(0,END)
+            TextBoxNombres.delete(0,END)
+            TextBoxApellidos.delete(0,END)
+            TextBoxTelefono.delete(0,END)
+        except ValueError as error:
+            print("Error al modificar los datos{}".format(error))
+            
+            
+def eliminarRegistros():
+        
+        global TextBoxDni,TextBoxNombres,TextBoxApellidos,TextBoxTelefono,combo
+        
+        try:
+            if TextBoxDni is None:
+                print("los widget no estan inicializados")
+                return
+            
+            dni = TextBoxDni.get()
+            
+            
+            CClientes.eliminarClientes(dni)
+            messagebox.showinfo("Información","Los datos fueron eliminados")
             
             actualizarTreeView()
             
