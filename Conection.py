@@ -4,7 +4,7 @@ class CConexion:
     
     def ConexionBaseDeDatos():
         try:
-            conexion = mysql.connector.connect(user='root',password='eLeanor22',
+            conexion = mysql.connector.connect(user='root',password='',
                                                host='127.0.0.1',
                                                database='pontocodb',
                                                port='3306')
