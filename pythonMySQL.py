@@ -86,7 +86,7 @@ def Formulario():
             seleccionCargo.set("Peon")
             
             Button(groupBox,text="Guardar", width=10,command=guardarRegistros).grid(row=5,column=0)
-            Button(groupBox,text="Modificar", width=10).grid(row=5,column=1)
+            Button(groupBox,text="Modificar", width=10,command=modificarRegistros).grid(row=5,column=1)
             Button(groupBox,text="Eliminar", width=10).grid(row=5,column=2)
             
             groupBox = LabelFrame(base,text="Lista de trabajadores", padx=5,pady=5,)
@@ -113,8 +113,15 @@ def Formulario():
             tree.heading("# 5",text="Cargo")
             
             
+            #Agregar los datos a la tabla
+            #Mostrar la tabla
             
+            for row in CClientes.mostrarClientes():
+                tree.insert("","end",values=row)
             
+            #ejecutar la funcion de hacer click y mostrar el resultado en los entry
+            
+            tree.bind("<<TreeviewSelect>>",seleccionarRegistro)
             
             
             tree.pack()
@@ -146,6 +153,8 @@ def guardarRegistros():
             CClientes.ingresarClientes(dni,nombres,apellidos,telefono,cargo)
             messagebox.showinfo("Información","Los datos fueron guardados")
             
+            actualizarTreeView()
+            
             TextBoxDni.delete(0,END)
             TextBoxNombres.delete(0,END)
             TextBoxApellidos.delete(0,END)
@@ -153,6 +162,77 @@ def guardarRegistros():
         except ValueError as error:
             print("Error al ingresar los datos{}".format(error))
            
-                
+def actualizarTreeView():
+    global tree
+    
+    
+    try:
+        #borrar todos los elementos actuales del treeview
+        tree.delete(*tree.get_children())
+        
+        #obtener los datos que queremos mostrar
+        datos = CClientes.mostrarClientes()
+        
+        #insertar los nuevos datos en el treeview
+        for row in CClientes.mostrarClientes():
+            tree.insert("","end",values=row)
+    except ValueError as error:
+        print("Error al actualizar la tabla {}".format(error))
+                    
+
+
+def seleccionarRegistro(event):
+    try:
+        itemseleccionado = tree.focus()
+        
+        if itemseleccionado:
+            #obtener los valores por columnas
+            values = tree.item(itemseleccionado)['values']
+            
+            TextBoxDni.delete(0,END)
+            TextBoxDni.insert(0,values[0])
+            
+            TextBoxNombres.delete(0,END)
+            TextBoxNombres.insert(0,values[1])
+            
+            TextBoxApellidos.delete(0,END)
+            TextBoxApellidos.insert(0,values[2])
+            
+            TextBoxTelefono.delete(0,END)
+            TextBoxTelefono.insert(0,values[3])
+            
+            combo.set(values[4])
+
+    except ValueError as error:
+        print("Error al seleccionar el registro {}".format(error))
+
+
+
+def modificarRegistros():
+        
+        global TextBoxDni,TextBoxNombres,TextBoxApellidos,TextBoxTelefono,combo,groupBox
+        
+        try:
+            if TextBoxDni is None or TextBoxNombres is None or TextBoxApellidos is None or combo is None:
+                print("los widget no estan inicializados")
+                return
+            
+            dni = TextBoxDni.get()
+            nombres = TextBoxNombres.get()
+            apellidos = TextBoxApellidos.get()
+            telefono = TextBoxTelefono.get()
+            cargo = combo.get()
+            
+            CClientes.modificarClientes(dni,nombres,apellidos,telefono,cargo)
+            messagebox.showinfo("Información","Los datos fueron guardados")
+            
+            actualizarTreeView()
+            
+            TextBoxDni.delete(0,END)
+            TextBoxNombres.delete(0,END)
+            TextBoxApellidos.delete(0,END)
+            TextBoxTelefono.delete(0,END)
+        except ValueError as error:
+            print("Error al modificar los datos{}".format(error))
 
 Formulario()        
